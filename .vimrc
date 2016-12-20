@@ -19,6 +19,9 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " added nerdtree
 Plugin 'scrooloose/nerdtree'
 
+" git plugin for nerdtree
+Plugin 'Xuyuanp/nerdtree-git-plugin'
+
 " flake8 checker
 Plugin 'andviro/flake8-vim'
 
@@ -36,7 +39,7 @@ Plugin 'altercation/vim-colors-solarized'
 Plugin 'jistr/vim-nerdtree-tabs'
 
 " searching for files using Ctrl+P, freezes when tried
-" Plugin 'kien/ctrlp.vim'
+Plugin 'kien/ctrlp.vim'
 
 Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 
@@ -157,3 +160,19 @@ autocmd InsertEnter * :set number
 autocmd InsertLeave * :set relativenumber
 set diffopt+=vertical
 noremap <C-n> :call NumberToggle()<cr>
+
+
+" The Silver Searcher
+if executable('ag')
+  " Use ag over grep
+  set grepprg=ag\ --nogroup\ --nocolor
+
+  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
+  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+
+  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+endif
+
+nmap <silent> <RIGHT> :cnext<CR>
+nmap <silent> <LEFT> :cprev<CR>
