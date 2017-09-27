@@ -49,6 +49,12 @@ Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 " Git merge tool
 Plugin 'tpope/vim-fugitive'
 
+" Testing autocomplete tool
+Plugin 'Valloric/YouCompleteMe'
+
+" Latex plugin
+Plugin 'lervag/vimtex'
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
@@ -73,45 +79,36 @@ set backspace=indent,eol,start
 set wildmode=longest,list,full
 set wildmenu
 
-let os = substitute(system('uname'), "\n", "", "")
-if os != "Linux"
-    if has('gui_running')
-      set background=dark
-      colorscheme solarized
-    else
-      colorscheme zenburn
-    endif
-endif
-
 " Open NERDTree by default when opening vim
 " Close NERDTree by default when closing vim
 "
-"autocmd VimEnter * NERDTree
-"autocmd VimEnter * wincmd p
-"
-"function! NERDTreeQuit()
-"  redir => buffersoutput
-"  silent buffers
-"  redir END
-""                     1BufNo  2Mods.     3File           4LineNo
-"  let pattern = '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \(\d\+\)$'
-"  let windowfound = 0
-"
-"  for bline in split(buffersoutput, "\n")
-"    let m = matchlist(bline, pattern)
-"
-"    if (len(m) > 0)
-"      if (m[2] =~ '..a..')
-"        let windowfound = 1
-"      endif
-"    endif
-"  endfor
-"
-"  if (!windowfound)
-"    quitall
-"  endif
-"endfunction
-"autocmd WinEnter * call NERDTreeQuit()
+" autocmd VimEnter * NERDTree
+" autocmd VimEnter * wincmd p
+" 
+" function! NERDTreeQuit()
+"   redir => buffersoutput
+"   silent buffers
+"   redir END
+" "                     1BufNo  2Mods.     3File           4LineNo
+"   let pattern = '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \(\d\+\)$'
+"   let windowfound = 0
+" 
+"   for bline in split(buffersoutput, "\n")
+"     let m = matchlist(bline, pattern)
+" 
+"     if (len(m) > 0)
+"       if (m[2] =~ '..a..')
+"         let windowfound = 1
+"       endif
+"     endif
+"   endfor
+" 
+"   if (!windowfound)
+"     quitall
+"   endif
+" endfunction
+" 
+" autocmd WinEnter * call NERDTreeQuit()
 
 " moving around mappings
 nnoremap <C-J> <C-W><C-J>
@@ -129,38 +126,24 @@ let python_highlight_all=1
 " call togglebg#map("<F5>")
 
 " default copy-paste to clipboard
-set clipboard=unnamed
+set clipboard=unnamedplus
 
 set nowrap
 set textwidth=0 wrapmargin=0
 set number
 
-" seting for MacVim
-if os != "Linux"
-    set guifont=Monaco:h14
-endif
 " disable arrow keys
-
 noremap <Up> <NOP>
 noremap <Down> <NOP>
 noremap <Left> <NOP>
 noremap <Right> <NOP>
 
-function! NumberToggle()
-  if(&relativenumber == 1)
-    set number
-  else
-    set relativenumber
-  endif
-endfunc
-
-nnoremap <C-m> :call NumberToggle()<cr>
+" Always want to use relativenumbers
+set relativenumber
 
 autocmd InsertEnter * :set number
 autocmd InsertLeave * :set relativenumber
 set diffopt+=vertical
-noremap <C-n> :call NumberToggle()<cr>
-
 
 " The Silver Searcher
 if executable('ag')
@@ -176,3 +159,6 @@ endif
 
 nmap <silent> <RIGHT> :cnext<CR>
 nmap <silent> <LEFT> :cprev<CR>
+
+" latex ignore files setup
+let NERDTreeIgnore = ['\.log$', '\.nav$', '\.snm$', '\.pdf$', '\.aux$', '\.toc$', '\.out$']
