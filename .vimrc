@@ -49,18 +49,50 @@ Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
 " Git merge tool
 Plugin 'tpope/vim-fugitive'
 
+" Surround vim 
+Plugin 'tpope/vim-surround'
+
+" Repeat vim 
+Plugin 'tpope/vim-repeat'
+
 " Testing autocomplete tool
 Plugin 'Valloric/YouCompleteMe'
 
 " Latex plugin
 Plugin 'lervag/vimtex'
 
+" Haskell plugin
+Plugin 'dag/vim2hs'
+
+" general syntax checker
+Plugin 'scrooloose/syntastic'
+
+" airline
+
+Plugin 'vim-airline/vim-airline'
+Plugin 'vim-airline/vim-airline-themes'
+
+" begginner default recommended settings
+set statusline+=%#warningmsg#
+set statusline+=%{SyntasticStatuslineFlag()}
+set statusline+=%*
+
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_wq = 0
+
+" plugin for tmux + vim  integration -> sending commands to tmux from vim
+Plugin 'jpalardy/vim-slime'
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
+
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
 
 syntax on
 filetype on            " enables filetype detection
-filetype plugin on     " enables filetype specific plugins
+filetype plugin indent on     " enables filetype specific plugins
 
 " intendation
 set tabstop=4
@@ -68,7 +100,7 @@ set softtabstop=4
 set shiftwidth=4
 set textwidth=79
 set expandtab
-set autoindent
+" set autoindent
 set fileformat=unix
 
 set showcmd
@@ -162,3 +194,18 @@ nmap <silent> <LEFT> :cprev<CR>
 
 " latex ignore files setup
 let NERDTreeIgnore = ['\.log$', '\.nav$', '\.snm$', '\.pdf$', '\.aux$', '\.toc$', '\.out$']
+
+
+" I want to quit the quickfix window if I closed it's corresponding file
+:autocmd WinEnter * if &buftype ==# 'quickfix' && winnr('$') == 1 | quit | endif
+
+" Haskell file syntax helpers
+au FileType haskell nnoremap <buffer> <F1> :HdevtoolsType<CR>
+au FileType haskell nnoremap <buffer> <silent> <F2> :HdevtoolsClear<CR>
+au FileType haskell nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
+
+" In visual mode you can now press gq to convert 
+" a expression to it’s pointfree form. Though quite often the resulting form
+" is more obfuscated than the original.
+
+autocmd BufEnter *.hs set formatprg=pointfree
