@@ -19,14 +19,8 @@ Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 " added nerdtree
 Plugin 'scrooloose/nerdtree'
 
-" git plugin for nerdtree
-Plugin 'Xuyuanp/nerdtree-git-plugin'
-
-" flake8 checker
-Plugin 'andviro/flake8-vim'
-
-" python code assist
-Plugin 'python-rope/ropevim'
+" commenting plugin
+Plugin 'scrooloose/nerdcommenter'
 
 " indendation 
 Plugin 'vim-scripts/indentpython.vim'
@@ -41,36 +35,52 @@ Plugin 'jistr/vim-nerdtree-tabs'
 " searching for files using Ctrl+P, freezes when tried
 Plugin 'kien/ctrlp.vim'
 
-Plugin 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
-
-" show status line of git branch
-Plugin 'powerline/powerline', {'rtp': 'powerline/bindings/vim/'}
-
 " Git merge tool
 Plugin 'tpope/vim-fugitive'
 
 " Surround vim 
-Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-surround', {'autoload': {'filetypes': ['python']} }
 
 " Repeat vim 
 Plugin 'tpope/vim-repeat'
 
-" Testing autocomplete tool
+" " Testing autocomplete tool
 Plugin 'Valloric/YouCompleteMe'
+" Plugin 'davidhalter/jedi-vim'
+" Plugin 'Shougo/deoplete.nvim'
+"
+" Undo visualisation
+Plugin 'sjl/gundo.vim'
+
+" Navigate between vim splits and tmux splits seamlessly
+Plugin 'christoomey/vim-tmux-navigator'
+
+"Add this line if you are using Python 3.
+let g:gundo_prefer_python3 = 1
+
+let g:ycm_server_keep_logfiles = 1
+let g:ycm_server_log_level = 'debug'
 
 " Latex plugin
 Plugin 'lervag/vimtex'
 
-" Haskell plugin
+" Haskell plugin(s)
 Plugin 'dag/vim2hs'
+Plugin 'eagletmt/ghcmod-vim'
 
 " general syntax checker
 Plugin 'scrooloose/syntastic'
+
+" trying out an async syntax checker
+" Plugin 'w0rp/ale'
 
 " airline
 
 Plugin 'vim-airline/vim-airline'
 Plugin 'vim-airline/vim-airline-themes'
+
+" async execution
+Plugin 'Shougo/vimproc.vim'
 
 " begginner default recommended settings
 set statusline+=%#warningmsg#
@@ -86,6 +96,9 @@ let g:syntastic_check_on_wq = 0
 Plugin 'jpalardy/vim-slime'
 let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
+
+" Prose writing plugin
+Plugin 'junegunn/goyo.vim'
 
 " All of your Plugins must be added before the following line
 call vundle#end()            " required
@@ -111,37 +124,6 @@ set backspace=indent,eol,start
 set wildmode=longest,list,full
 set wildmenu
 
-" Open NERDTree by default when opening vim
-" Close NERDTree by default when closing vim
-"
-" autocmd VimEnter * NERDTree
-" autocmd VimEnter * wincmd p
-" 
-" function! NERDTreeQuit()
-"   redir => buffersoutput
-"   silent buffers
-"   redir END
-" "                     1BufNo  2Mods.     3File           4LineNo
-"   let pattern = '^\s*\(\d\+\)\(.....\) "\(.*\)"\s\+line \(\d\+\)$'
-"   let windowfound = 0
-" 
-"   for bline in split(buffersoutput, "\n")
-"     let m = matchlist(bline, pattern)
-" 
-"     if (len(m) > 0)
-"       if (m[2] =~ '..a..')
-"         let windowfound = 1
-"       endif
-"     endif
-"   endfor
-" 
-"   if (!windowfound)
-"     quitall
-"   endif
-" endfunction
-" 
-" autocmd WinEnter * call NERDTreeQuit()
-
 " moving around mappings
 nnoremap <C-J> <C-W><C-J>
 nnoremap <C-K> <C-W><C-K>
@@ -165,10 +147,10 @@ set textwidth=0 wrapmargin=0
 set number
 
 " disable arrow keys
-noremap <Up> <NOP>
-noremap <Down> <NOP>
-noremap <Left> <NOP>
-noremap <Right> <NOP>
+" noremap <Up> <NOP>
+" noremap <Down> <NOP>
+" noremap <Left> <NOP>
+" noremap <Right> <NOP>
 
 " Always want to use relativenumbers
 set relativenumber
@@ -209,3 +191,39 @@ au FileType haskell nnoremap <buffer> <silent> <F3> :HdevtoolsInfo<CR>
 " is more obfuscated than the original.
 
 autocmd BufEnter *.hs set formatprg=pointfree
+
+syntax on
+let g:solarized_termcolors=256
+set t_Co=256 
+set background=dark
+colorscheme solarized
+
+" add haskell cabal to the path to use it from the haskell plugins
+let $PATH = $PATH . ':' . expand('~/.cabal/bin')
+
+" mode that is made for writing text
+" see https://statico.github.io/vim3.html#writing-prose-in-vim
+function! ProseMode()
+  call goyo#execute(0, [])
+  set spell noci nosi noai nolist noshowmode noshowcmd
+  set complete+=s
+  set bg=light
+  if !has('gui_running')
+    let g:solarized_termcolors=256
+  endif
+  colors solarized
+endfunction
+
+command! ProseMode call ProseMode()
+nmap \p :ProseMode<CR>
+
+" I don't like folding so disable it
+set nofoldenable    " disable folding
+
+" Aliasing commands
+fun! SetupCommandAlias(from, to)
+  exec 'cnoreabbrev <expr> '.a:from
+        \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")'
+        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
+endfun
+call SetupCommandAlias("W", "w")
